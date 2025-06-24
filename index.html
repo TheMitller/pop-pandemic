@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GITA THE PLASTIC - Countdown</title>
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      color: #00ffee;
+      font-family: 'Courier New', monospace;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      animation: glitch 1.5s infinite;
+      margin-bottom: 1em;
+    }
+
+    #ui {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1em;
+    }
+
+    #countdown {
+      font-size: 1.5em;
+    }
+
+    #glitchToggle {
+      background: #00ffee;
+      color: black;
+      border: none;
+      padding: 0.75em 1.5em;
+      font-size: 1em;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 0 10px #00ffee;
+      transition: all 0.3s ease;
+    }
+
+    #glitchToggle:hover {
+      background: #0ff;
+      box-shadow: 0 0 20px #0ff;
+    }
+
+    #reveal {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      animation: glitchFade 1.5s ease-in-out forwards;
+    }
+
+    #reveal img {
+      max-width: 50%;
+      margin-bottom: 1em;
+      opacity: 0;
+      animation: glitchFade 1.5s ease-in-out forwards;
+      animation-delay: 0.2s;
+      animation-fill-mode: forwards;
+    }
+
+    .glitch-text {
+      font-size: 2em;
+      color: #00ffee;
+      text-shadow: 2px 0 red, -2px 0 blue;
+      opacity: 0;
+      animation: glitch 1.5s infinite, glitchFade 1.5s ease-in-out forwards;
+      animation-delay: 0.5s;
+      animation-fill-mode: forwards;
+    }
+
+    @keyframes glitch {
+      0% { text-shadow: 2px 0 red, -2px 0 blue; }
+      50% { text-shadow: -2px 0 red, 2px 0 blue; }
+      100% { text-shadow: 2px 0 red, -2px 0 blue; }
+    }
+
+    @keyframes glitchFade {
+      0% {
+        opacity: 0;
+        transform: scale(1.05) skewX(5deg);
+        filter: contrast(0.5) brightness(1.5);
+      }
+      50% {
+        opacity: 0.5;
+        transform: scale(1.02) skewX(-3deg);
+        filter: contrast(1.2) brightness(1.2);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) skewX(0deg);
+        filter: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>GITA THE PLASTIC</h1>
+
+  <div id="ui">
+    <button id="glitchToggle">🔊 Play Glitch</button>
+    <p id="countdown">Loading...</p>
+  </div>
+
+  <div id="reveal">
+    <img src="pop-pandemic.png" alt="Pop Pandemic" />
+    <div class="glitch-text">WELCOME TO THE POP PANDEMIC</div>
+  </div>
+
+  <audio id="glitchAudio" loop>
+    <source src="glitch.mp3" type="audio/mpeg" />
+  </audio>
+
+  <script>
+    const countdownEl = document.getElementById("countdown");
+    const revealEl = document.getElementById("reveal");
+    const glitchAudio = document.getElementById("glitchAudio");
+    const toggleBtn = document.getElementById("glitchToggle");
+    const uiBox = document.getElementById("ui");
+
+    const targetDate = new Date(2025, 5, 25, 18, 0, 0).getTime(); // June 25, 2025 @ 6 PM IRST
+    let isPlaying = false;
+
+    toggleBtn.addEventListener("click", () => {
+      if (!isPlaying) {
+        glitchAudio.play();
+        toggleBtn.textContent = "🔇 Stop Glitch";
+      } else {
+        glitchAudio.pause();
+        glitchAudio.currentTime = 0;
+        toggleBtn.textContent = "🔊 Play Glitch";
+      }
+      isPlaying = !isPlaying;
+    });
+
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const diff = targetDate - now;
+
+      if (diff <= 0) {
+        uiBox.style.display = "none";
+        revealEl.style.display = "flex";
+        return;
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+
+      countdownEl.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    }
+
+    setInterval(updateCountdown, 1000);
+  </script>
+</body>
+</html>
